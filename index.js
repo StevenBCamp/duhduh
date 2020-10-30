@@ -6,6 +6,38 @@ let simConnectLibrary = null
 
 try {
     simConnectLibrary = require(`./build/Release/msfs-simconnect-nodejs`)
+
+    var success = simConnectLibrary.open("MyAppName", 
+    (name, version) => {
+        console.log("Connected to: " + name + "\nSimConnect version: " + version);
+        // Safe to start interacting with SimConnect here (request data, etc)
+        simConnectLibrary.requestDataOnSimObject([
+            ["Plane Latitude", "degrees"],
+            ["Plane Longitude", "degrees"],  
+            ["PLANE ALTITUDE", "feet"],
+            ["AIRSPEED TRUE", "knots"]
+        ], (data) => {
+            // Called when data is received
+            console.log(
+                "Latitude:  " + data["Plane Latitude"] + "\n" +
+                "Longitude: " + data["Plane Longitude"] + "\n" +
+                "Altitude:  " + data["PLANE ALTITUDE"] + " feet\n" +
+                "TAS:  " + data["AIRSPEED TRUE"] + " knots"
+            );
+        }, 
+        simConnectLibrary.objectId.USER,               // User aircraft
+        simConnectLibrary.period.SIM_FRAME,            // Get data every sim frame...
+        simConnectLibrary.dataRequestFlag.CHANGED      // ...but only if one of the variables have changed
+    );
+    }, () => {
+        console.log("Simulator exited by user");
+    }, (exception) => {
+        console.log("SimConnect exception: " + exception.name + " (" + exception.dwException + ", " + exception.dwSendID + ", " + exception.dwIndex + ", " + exception.cbData + ")");
+    }, (error) => {
+        console.log("Undexpected disconnect/error: " + error); // Look up error code in ntstatus.h for details
+});
+
+    
 } catch (exception) {
     console.error(`Could not load the SimConnect SDK. Does the build directory exists, so is it compiled? Exiting.`)
     console.error(exception);

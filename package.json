@@ -20,18 +20,20 @@
     "bugs": {
         "url": "https://github.com/CockpitConnect/msfs-simconnect-nodejs/issues"
     },
-    "publishConfig": { 
+    "publishConfig": {
         "registry": "https://npm.pkg.github.com/"
     },
     "bundleDependencies": false,
     "dependencies": {
-        "nan": "^2.14.0"
+        "nan": "^2.14.0",
+        "nodemon": "^2.0.6"
     },
     "deprecated": false,
     "gypfile": false,
     "license": "MIT",
     "scripts": {
         "build": "node-gyp configure build --msvs_version=2019 --arch=x64",
-        "rebuild": "node-gyp configure rebuild --msvs_version=2019 --arch=x64"
+        "rebuild": "node-gyp configure rebuild --msvs_version=2019 --arch=x64",
+        "dev": "node_modules/.bin/nodemon index.js"
     }
 }
